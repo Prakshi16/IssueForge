@@ -1,40 +1,30 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 
-// ============================================================
 // APP.JS - ISSUEFORGE FRONTEND
 // React app with full CRUD operations connected to MongoDB
-// ============================================================
 
 const API_URL = "http://localhost:5000/api/issues";
 
 function App() {
-  // State to store all issues (fetched from database)
+  // store all issues
   const [issues, setIssues] = useState([]);
 
-  // State for filtering
+  // filtering
   const [filterStatus, setFilterStatus] = useState("All");
   const [filterOwner, setFilterOwner] = useState("");
 
-  // State for edit mode
+  // editing
   const [editingIssue, setEditingIssue] = useState(null);
 
-  // State for loading indicator
+  // loading indicator
   const [loading, setLoading] = useState(false);
 
-  // ============================================================
-  // LOAD ISSUES ON COMPONENT MOUNT
-  // useEffect runs once when component loads
-  // ============================================================
   useEffect(() => {
     loadIssuesFromServer();
-  }, []); // Empty dependency array = run once on mount
+  }, []);
 
-  // ============================================================
-  // API FUNCTIONS
-  // ============================================================
-
-  // Function to load all issues from the backend
+  // load issues from the backend
   const loadIssuesFromServer = async () => {
     setLoading(true);
     try {
@@ -55,7 +45,7 @@ function App() {
     }
   };
 
-  // Function to add a new issue (POST to database)
+  // add a new issue
   const addIssue = async (newIssueData) => {
     try {
       const response = await fetch(API_URL, {
@@ -74,7 +64,6 @@ function App() {
       const savedIssue = await response.json();
       console.log("✅ Issue created:", savedIssue);
 
-      // Refresh the issue list from server
       await loadIssuesFromServer();
       alert("Issue added successfully!");
     } catch (error) {
@@ -83,7 +72,7 @@ function App() {
     }
   };
 
-  // Function to update an existing issue (PUT to database)
+  // update existing issue
   const updateIssue = async (issueId, updatedData) => {
     try {
       const response = await fetch(`${API_URL}/${issueId}`, {
@@ -102,7 +91,6 @@ function App() {
       const updatedIssue = await response.json();
       console.log("✅ Issue updated:", updatedIssue);
 
-      // Refresh the issue list from server
       await loadIssuesFromServer();
       setEditingIssue(null); // Close edit form
       alert("Issue updated successfully!");
@@ -112,9 +100,8 @@ function App() {
     }
   };
 
-  // Function to delete an issue (DELETE from database)
+  // delete function
   const deleteIssue = async (issueId, issueTitle) => {
-    // Confirm before deleting
     const confirmed = window.confirm(
       `Are you sure you want to delete issue: "${issueTitle}"?`
     );
@@ -133,7 +120,6 @@ function App() {
 
       console.log("✅ Issue deleted");
 
-      // Refresh the issue list from server
       await loadIssuesFromServer();
       alert("Issue deleted successfully!");
     } catch (error) {
@@ -142,9 +128,6 @@ function App() {
     }
   };
 
-  // ============================================================
-  // FILTERING LOGIC (CLIENT-SIDE)
-  // ============================================================
   const getFilteredIssues = () => {
     return issues.filter((issue) => {
       // Filter by status
@@ -167,15 +150,12 @@ function App() {
   // ============================================================
   return (
     <div className="app">
-      {/* Header */}
       <header className="header">
         <h1 className="title">IssueForge</h1>
         <p className="subtitle">Demonstration of CRUD Operations</p>
       </header>
 
-      {/* Main Content Area */}
       <div className="container">
-        {/* Filter Controls */}
         <IssueFilter
           filterStatus={filterStatus}
           setFilterStatus={setFilterStatus}
@@ -185,10 +165,8 @@ function App() {
           totalCount={issues.length}
         />
 
-        {/* Loading Indicator */}
         {loading && <div className="loading">Loading issues...</div>}
 
-        {/* Edit Form (shown when editing an issue) */}
         {editingIssue && (
           <EditIssueForm
             issue={editingIssue}
@@ -211,10 +189,7 @@ function App() {
   );
 }
 
-// ============================================================
-// ISSUEFILTER COMPONENT
-// Filter issues by status and owner
-// ============================================================
+//filter
 function IssueFilter({
   filterStatus,
   setFilterStatus,
@@ -227,7 +202,6 @@ function IssueFilter({
     <div className="filterContainer">
       <h2 className="sectionTitle">Filter Issues</h2>
       <div className="filterControls">
-        {/* Status Filter Dropdown */}
         <div className="filterGroup">
           <label className="label">Status</label>
           <select
@@ -243,7 +217,6 @@ function IssueFilter({
           </select>
         </div>
 
-        {/* Owner Filter Input */}
         <div className="filterGroup">
           <label className="label">Owner</label>
           <input
@@ -255,7 +228,6 @@ function IssueFilter({
           />
         </div>
 
-        {/* Clear Filters Button */}
         <div className="filterGroup">
           <button
             onClick={() => {
@@ -269,7 +241,6 @@ function IssueFilter({
         </div>
       </div>
 
-      {/* Results Count */}
       <p className="filterResults">
         Showing {issueCount} of {totalCount} issues
       </p>
@@ -277,10 +248,7 @@ function IssueFilter({
   );
 }
 
-// ============================================================
-// ISSUELIST COMPONENT
-// Displays all issues in a table format
-// ============================================================
+//current issue area
 function IssueList({ issues, onDelete, onEdit }) {
   return (
     <div className="issueListContainer">
@@ -317,10 +285,7 @@ function IssueList({ issues, onDelete, onEdit }) {
   );
 }
 
-// ============================================================
-// ISSUEROW COMPONENT
-// Renders a single issue as a table row with Edit/Delete buttons
-// ============================================================
+//a row for issues?
 function IssueRow({ issue, onDelete, onEdit }) {
   // Get the appropriate status badge class
   const getStatusClass = (status) => {
@@ -338,7 +303,7 @@ function IssueRow({ issue, onDelete, onEdit }) {
     }
   };
 
-  // Format date for display (YYYY-MM-DD)
+  //date, might remove later, sounds useless
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
@@ -380,10 +345,7 @@ function IssueRow({ issue, onDelete, onEdit }) {
   );
 }
 
-// ============================================================
-// EDITISSUEFORM COMPONENT
-// Form to edit an existing issue
-// ============================================================
+//edit the issue - to tell the progress mainly
 function EditIssueForm({ issue, onUpdate, onCancel }) {
   // State for form inputs - initialized with current issue values
   const [title, setTitle] = useState(issue.title);
@@ -394,17 +356,14 @@ function EditIssueForm({ issue, onUpdate, onCancel }) {
     issue.dueDate ? new Date(issue.dueDate).toISOString().split("T")[0] : ""
   );
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Basic validation
     if (!title.trim() || !owner.trim()) {
       alert("Please fill in both Title and Owner fields");
       return;
     }
 
-    // Create updated issue object
     const updatedIssue = {
       title: title.trim(),
       owner: owner.trim(),
@@ -413,7 +372,6 @@ function EditIssueForm({ issue, onUpdate, onCancel }) {
       dueDate: dueDate || null,
     };
 
-    // Call parent function to update issue
     onUpdate(issue._id, updatedIssue);
   };
 
@@ -422,7 +380,6 @@ function EditIssueForm({ issue, onUpdate, onCancel }) {
       <div className="editFormContainer">
         <h2 className="sectionTitle">Edit Issue</h2>
         <form onSubmit={handleSubmit} className="form">
-          {/* Title Input */}
           <div className="formGroup">
             <label className="label">Title *</label>
             <input
@@ -434,7 +391,6 @@ function EditIssueForm({ issue, onUpdate, onCancel }) {
             />
           </div>
 
-          {/* Owner Input */}
           <div className="formGroup">
             <label className="label">Owner *</label>
             <input
@@ -446,7 +402,6 @@ function EditIssueForm({ issue, onUpdate, onCancel }) {
             />
           </div>
 
-          {/* Status Dropdown */}
           <div className="formGroup">
             <label className="label">Status</label>
             <select
@@ -461,7 +416,6 @@ function EditIssueForm({ issue, onUpdate, onCancel }) {
             </select>
           </div>
 
-          {/* Effort Input */}
           <div className="formGroup">
             <label className="label">Effort (days)</label>
             <input
@@ -474,7 +428,6 @@ function EditIssueForm({ issue, onUpdate, onCancel }) {
             />
           </div>
 
-          {/* Due Date Input */}
           <div className="formGroup">
             <label className="label">Due Date</label>
             <input
@@ -485,7 +438,6 @@ function EditIssueForm({ issue, onUpdate, onCancel }) {
             />
           </div>
 
-          {/* Action Buttons */}
           <div className="formActions">
             <button type="submit" className="submitButton">
               Save Changes
@@ -500,10 +452,9 @@ function EditIssueForm({ issue, onUpdate, onCancel }) {
   );
 }
 
-// ============================================================
-// ADDISSUEFORM COMPONENT
-// Form to add new issues with input validation
-// ============================================================
+//finally!
+
+//add issue
 function AddIssueForm({ onAddIssue }) {
   // State for form inputs
   const [title, setTitle] = useState("");
@@ -512,30 +463,24 @@ function AddIssueForm({ onAddIssue }) {
   const [effort, setEffort] = useState("");
   const [dueDate, setDueDate] = useState("");
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Basic validation
     if (!title.trim() || !owner.trim()) {
       alert("Please fill in both Title and Owner fields");
       return;
     }
 
-    // Create new issue object
     const newIssue = {
       title: title.trim(),
       owner: owner.trim(),
       status: status,
       effort: effort ? parseInt(effort) : 0,
       dueDate: dueDate || null,
-      // created date will be auto-generated by MongoDB
     };
 
-    // Call parent function to add issue
     onAddIssue(newIssue);
 
-    // Reset form fields
     setTitle("");
     setOwner("");
     setStatus("New");
@@ -547,7 +492,6 @@ function AddIssueForm({ onAddIssue }) {
     <div className="formContainer">
       <h2 className="sectionTitle">Create New Issue </h2>
       <form onSubmit={handleSubmit} className="form">
-        {/* Title Input */}
         <div className="formGroup">
           <label className="label">Title *</label>
           <input
@@ -559,7 +503,6 @@ function AddIssueForm({ onAddIssue }) {
           />
         </div>
 
-        {/* Owner Input */}
         <div className="formGroup">
           <label className="label">Owner *</label>
           <input
@@ -571,7 +514,6 @@ function AddIssueForm({ onAddIssue }) {
           />
         </div>
 
-        {/* Status Dropdown */}
         <div className="formGroup">
           <label className="label">Status</label>
           <select
@@ -586,7 +528,6 @@ function AddIssueForm({ onAddIssue }) {
           </select>
         </div>
 
-        {/* Effort Input */}
         <div className="formGroup">
           <label className="label">Effort (days)</label>
           <input
@@ -599,7 +540,6 @@ function AddIssueForm({ onAddIssue }) {
           />
         </div>
 
-        {/* Due Date Input */}
         <div className="formGroup">
           <label className="label">Due Date</label>
           <input
@@ -610,7 +550,6 @@ function AddIssueForm({ onAddIssue }) {
           />
         </div>
 
-        {/* Submit Button */}
         <button type="submit" className="submitButton">
           Add Issue
         </button>
