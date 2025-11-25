@@ -1,5 +1,5 @@
 // ============================================================
-// SERVER.JS - ISSUEFORGE BACKEND - PHASE 2
+// SERVER.JS - ISSUEFORGE BACKEND
 // Express server with MongoDB integration and full CRUD API
 // ============================================================
 
