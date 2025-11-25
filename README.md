@@ -25,7 +25,7 @@ IssueForge is a modern issue tracking system that allows you to create, view, ed
 
 ![alt text](image-1.png)
 
-issueforge/
+<!-- issueforge/
 ├── backend/
 │ ├── .env # Environment variables (not tracked in git)
 │ ├── .env.example # Example environment file
@@ -50,7 +50,7 @@ issueforge/
 │ ├── package.json # Frontend dependencies
 │ └── README.md # Create React App default README
 │
-└── README.md # This file - Main project documentation
+└── README.md # This file - Main project documentation -->
 
 # Installation & Setup
 
