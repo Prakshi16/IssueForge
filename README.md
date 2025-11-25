@@ -23,6 +23,8 @@ IssueForge is a modern issue tracking system that allows you to create, view, ed
 
 # Project Structure
 
+![alt text](image-1.png)
+
 issueforge/
 ├── backend/
 │ ├── .env # Environment variables (not tracked in git)
